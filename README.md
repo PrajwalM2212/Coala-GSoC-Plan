@@ -13,6 +13,16 @@ The point of interest for this project is the `load_configuration` and `save_sec
 In gist this function gets sections from all sources (`.coafile`, `.coarc`, `system_caofile`, `cli`) and merges them to give the final sections and targets. The real point of interest in this function is `load_config_file` function that gets sections from all the different config files. Getting into `load_config_file`, the point of interest changes to `ConfParser`. This is where the first part of the project resides in. 
 `ConfParser` inturn depends upon the `LineParser`, but not of much interest at this time. But the output of `LineParser` is important. It gives `(section_name, keys, value, append, comment)` tuple for each line. 
 
+`LineParser` converts 
+
+```python
+[LineCounting]
+enabled = False
+bears = LineCountBear
+max_lines_per_file = 1000
+```
+into 
+
 ```python
 ('LineCounting', [], '', False, '')
 ('', [('', 'enabled')], 'False', False, '')
@@ -32,5 +42,31 @@ To write code to generate sections from the dictionary. The code has to accomoda
 Since TOML does not understand config like `bears = SpaceConsistencyBear, LineLengthBear` definite mappings have to be decided upon. `bears = SpaceConsistencyBear, LineLengthBear` has to be `bears = [ SpaceConsistencyBear, LineLengthBear ]` in TOML. This works to remove ambiguity which gives another benifit of using TOML. But challenges do arise , what does `files += app.py` map into in TOML ?
 
 But the end goal is to get the sections.
+
+
+### `save_sections` 
+In gist, this function gets converts sections back into config file. Getting into `save_sections`, the point of interest changes to `ConfWriter`. This is where the next part of the project resides in.
+
+`ConfWriter` converts 
+```python
+python {comment2 : '# Patches may conflict with autopep8 so putting them in own section so they', comment3 : '# will be executed sequentially; also we need the LineLengthBear to double', comment4 : "# check the line length because PEP8Bear sometimes isn't able to correct the", comment5 : '# linelength.', bears : 'SpaceConsistencyBear, QuotesBear, LineContinuationBear', language : 'Python', preferred_quotation : "'", comment6 : '', default_actions : '**: ApplyPatchAction', comment7 : ''}
+```
+into 
+
+```python
+[python]
+# Patches may conflict with autopep8 so putting them in own section so they
+# will be executed sequentially; also we need the LineLengthBear to double
+# check the line length because PEP8Bear sometimes isn't able to correct the
+# linelength.
+bears = SpaceConsistencyBear, QuotesBear, LineContinuationBear
+language = Python
+preferred_quotation = '
+```
+Similarly the section has to been converted to a TOML format using `toml.dump(o, f)`. So the task is to write code to convert sections to TOML file. Again all the features of the current configuration system has to be accounted for. 
+
+The end goal is to get TOML file from the sections.
+
+
 
 
