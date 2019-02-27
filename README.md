@@ -69,4 +69,10 @@ The end goal is to get TOML file from the sections.
 
 
 
+## Major Challenges 
+1. Defining a mapping from current config system to TOML format for syntax like `+=`.
+2. Sections store comments. But comment data is lost when using `toml.load`. A issue exists https://github.com/uiri/toml/issues/77. So the solution would be to make a PR to the `toml` project at the last phase of the project. 
+
+
+
 
